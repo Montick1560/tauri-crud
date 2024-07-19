@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css'; 
 
 // Asumimos que tienes un archivo CSS para estilos
 const App = () => {
+  useEffect(()=>{
+async function Testing(){
+  const request = await fetch("http://192.168.100.177:5253/api/Tiempos/CheckUser")
+  const json = await request.json()
+  console.log(json)
+}
+Testing()
+  },[])
   return (
     <div className="app-container">
       <div className="sidebar">
