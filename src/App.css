@@ -1,0 +1,81 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 20%;
+  background-color: #f4f4f4;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  max-width: 60%;
+}
+
+.clock {
+  margin-top: auto;
+  text-align: center;
+}
+
+.clock .time,
+.clock .date {
+  display: block;
+}
+
+.main-content {
+  width: 80%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-connection {
+  width: 100%;
+  background-color: #ccc;
+  text-align: center;
+  padding: 20px;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.status-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.status-item {
+  text-align: center;
+}
+
+.status-item .label {
+  font-size: 18px;
+}
+
+.status-item .value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.pending-downtimes,
+.scheduled-downtime {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+}
+
+.pending-downtimes {
+  background-color: #d4ffd4;
+  margin-bottom: 10px;
+}
+
+.scheduled-downtime {
+  background-color: #ffd4d4;
+}
