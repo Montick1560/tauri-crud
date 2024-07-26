@@ -1,29 +1,73 @@
-import React, { useEffect } from 'react';
-import './App.css'; 
+import React, { useEffect, useState } from 'react';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+import './App.css';
 
-// Asumimos que tienes un archivo CSS para estilos
+// Componente para mostrar el estado de la conexión
+const ConnectionStatus = ({ isConnected }) => {
+  return (
+    <div className="connection-status">
+      {isConnected ? 'CONECTADO' : 'NO HAY CONEXIÓN AL PLC.'}
+    </div>
+  );
+};
+
 const App = () => {
-  useEffect(()=>{
-async function Testing(){
-  const request = await fetch("http://192.168.100.177:5253/api/Tiempos/CheckUser")
-  const json = await request.json()
-  console.log(json)
-}
-Testing()
-  },[])
+  const [isConnected, setIsConnected] = useState(false);
+  const [currentTime, setCurrentTime] = useState('Cargando hora...');
+
+  useEffect(() => {
+    // Comprobación inicial del estado de conexión
+    async function checkConnection() {
+      try {
+        const response = await fetch("http://192.168.100.177:5253/api/Tiempos/CheckUser");
+        const isConnected = await response.json();
+        setIsConnected(isConnected);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsConnected(false);
+      }
+    }
+
+    // Configurar y empezar la conexión con SignalR
+    const connection = new HubConnectionBuilder()
+      .withUrl('http://192.168.100.177:5253/api/Tiempos/update-time')
+      .withAutomaticReconnect()
+      .build();
+
+    const startConnection = async () => {
+      try {
+        await connection.start();
+        console.log('SignalR Connected.');
+      } catch (err) {
+        console.error('Error while establishing connection:', err);
+        setIsConnected(false);
+      }
+    }
+
+    connection.on('ReceiveTime', (time) => {
+      setCurrentTime(time);
+    });
+
+    startConnection();
+    checkConnection();
+
+    // Limpiar la conexión al desmontar el componente
+    return () => {
+      connection.stop().then(() => console.log('SignalR Disconnected.'));
+    };
+  }, []);
+
   return (
     <div className="app-container">
       <div className="sidebar">
         <img src="/img/INOACLOGOes.png" alt="INOAC Sistemas Exteriores" className="logo" />
         <div className="clock">
-          <span className="time">06:41:16 p. m.</span>
+          <span className="time">{currentTime}</span>
           <span className="date">sábado, 15 de junio de 2024</span>
         </div>
       </div>
       <div className="main-content">
-        <div className="no-connection">
-          <span>NO HAY CONEXIÓN AL PLC.</span>
-        </div>
+        <ConnectionStatus isConnected={isConnected} />
         <div className="status-container">
           <div className="status-item">
             <div className="label">TIEMPO DE PRODUCCIÓN</div>
